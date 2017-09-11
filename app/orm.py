@@ -146,7 +146,7 @@ class ModelMetaclass(type):
             raise RuntimeError('Primary key not found.')
         for k in mappings.keys():
             attrs.pop(k)
-        escaped_fields =list(map(lambda f: `%s` % f, fields)
+        escaped_fields =list(map(lambda f: `%s` % f, fields))
         attrs['__mappings__'] = mappings
         attrs['__table__'] = tableName
         attrs['__primary_key__'] = primaryKey
