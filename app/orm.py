@@ -146,17 +146,17 @@ class ModelMetaclass(type):
             raise RuntimeError('Primary key not found.')
         for k in mappings.keys():
             attrs.pop(k)
-        escaped_fields =list
+        escaped_fields =list(map(lambda f: `%s` % f, fields)
         attrs['__mappings__'] = mappings
         attrs['__table__'] = tableName
         attrs['__primary_key__'] = primaryKey
         attrs['__fields__'] = fields
-        attrs['__select__'] = 'select "%s", "%s" from "%s"' % (primaryKey, ','.join(escaped_fields), tableName)
-        attrs['__insert__'] = 'insert into "%s" ("%s", "%s") values (%s)' % \
+        attrs['__select__'] = 'select `%s`, %s from `%s`' % (primaryKey, ','.join(escaped_fields), tableName)
+        attrs['__insert__'] = 'insert into `%s` (%s, `%s`) values (%s)' % \
                               (tableName, ','.join(escaped_fields), primaryKey, create_args_string(len(escaped_fields) + 1))
-        attrs['__update__'] = 'update "%s" set %s where "%s"=?' % \
-                              (tableName, ','.join(map(lambda f: '"%s"=?' % (mappings.get(f).name or f), fields), primaryKey)
-        attrs['__delete__'] = 'delete from "%s" where "%s"=?' % \
+        attrs['__update__'] = 'update `%s` set %s where `%s`=?' % \
+                              (tableName, ','.join(map(lambda f: '`%s`=?' % (mappings.get(f).name or f), fields), primaryKey)
+        attrs['__delete__'] = 'delete from `%s` where `%s`=?' % \
                               (tableName, primaryKey)
 
         return type.__new__(cls, name, bases, attrs)
@@ -185,6 +185,7 @@ class ModelMetaclass(type):
                     value = field.default() if callable(field.default) else field.default
                     logging.debug('using default value for %s: %s' % (key, str(value)))
                     setattr(self, key, value)
+            return value
 
 
      
